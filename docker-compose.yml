@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   api:
@@ -6,15 +6,18 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "${PORT}:${PORT}"
     environment:
-      - NODE_ENV=development
-      - MONGODB_URI=mongodb://mongodb:27017/ozmap-tech-test?authSource=admin
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - MONGO_URI=mongodb://mongodb:27017/ozmap-tech-test?authSource=admin
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     depends_on:
       - mongodb
+    networks:
+      - oz-network
     command: npm run dev
 
   mongodb:
@@ -24,7 +27,9 @@ services:
     volumes:
       - mongodb_data:/data/db
     environment:
-      - MONGO_INITDB_DATABASE=oz-tech-test
+      - MONGO_INITDB_DATABASE=ozmap-tech-test
+    networks:
+      - oz-network
 
 volumes:
   mongodb_data:
