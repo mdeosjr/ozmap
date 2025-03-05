@@ -1,13 +1,16 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2020",
+    "module": "CommonJS",
+    "target": "ES2020",
+    "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "skipLibCheck": true
   },
   "types": ["reflect-metadata", "mocha"],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
