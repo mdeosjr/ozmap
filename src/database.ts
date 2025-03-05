@@ -1,11 +1,19 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+import "dotenv/config";
 
-const env = {
-  MONGO_URI: 'mongodb://root:example@127.0.0.1:27021/oz-tech-test?authSource=admin',
+const MONGO_URI = process.env.MONGO_URI;
+
+export const connectDB = async function (): Promise<void> {
+  try {
+    await mongoose.connect(MONGO_URI);
+    console.log("Connected to MongoDB");
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+    process.exit(1);
+  }
 };
 
-const init = async function() {
-  await mongoose.connect(env.MONGO_URI);
+export const disconnectDB = async function (): Promise<void> {
+  await mongoose.disconnect();
+  console.log("MongoDB disconnected");
 };
-
-export default init();

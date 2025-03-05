@@ -1,8 +1,5 @@
-import * as app from 'express';
-import { UserModel } from './models';
-
-const server = app();
-const router = app.Router();
+import { Router } from "express";
+import { UserModel } from "../models/models";
 
 const STATUS = {
   OK: 200,
@@ -14,7 +11,9 @@ const STATUS = {
   DEFAULT_ERROR: 418,
 };
 
-router.get('/user', async (req, res) => {
+const router = Router();
+
+router.get("/user", async (req, res) => {
   const { page, limit } = req.query;
 
   const [users, total] = await Promise.all([
@@ -30,26 +29,28 @@ router.get('/user', async (req, res) => {
   });
 });
 
-router.get('/users/:id', async (req, res) => {
+router.get("/users/:id", async (req, res) => {
   const { id } = req.params;
 
   const user = await UserModel.findOne({ _id: id }).lean();
 
   if (!user) {
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Region not found' });
+    res
+      .status(STATUS.INTERNAL_SERVER_ERROR)
+      .json({ message: "Region not found" });
   }
 
   return user;
 });
 
-router.put('/users/:id', async (req, res) => {
+router.put("/users/:id", async (req, res) => {
   const { id } = req.params;
   const { update } = req.body;
 
   const user = await UserModel.findOne({ _id: id }).lean();
 
   if (!user) {
-    res.status(STATUS.DEFAULT_ERROR).json({ message: 'Region not found' });
+    res.status(STATUS.DEFAULT_ERROR).json({ message: "Region not found" });
   }
 
   user.name = update.name;
@@ -59,6 +60,4 @@ router.put('/users/:id', async (req, res) => {
   return res.sendStatus(201);
 });
 
-server.use(router);
-
-export default server.listen(3003);
+export default router;
