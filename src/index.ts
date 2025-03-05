@@ -11,7 +11,7 @@ server.use(json());
 server.use(cors());
 server.use(routes);
 
-const init = async () => {
+const init = async (): Promise<void> => {
   try {
     await connectDB();
     server.listen(PORT, () => {
