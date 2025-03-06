@@ -3,20 +3,18 @@ import {
   getModelForClass,
   Prop,
   Ref,
+  DocumentType,
 } from "@typegoose/typegoose";
 import lib from "../lib";
 import { Base } from "./models";
 import { Region } from "./regionModel";
 
-@pre<User>("save", async function (next) {
-  const region = this as Omit<any, keyof User> & User;
-
-  if (region.isModified("coordinates")) {
-    region.address = await lib.getAddressFromCoordinates(region.coordinates);
-  } else if (region.isModified("address")) {
-    const { lat, lng } = await lib.getCoordinatesFromAddress(region.address);
-
-    region.coordinates = [lng, lat];
+@pre<User>("save", async function (this: DocumentType<User>, next) {
+  if (this.isModified("coordinates")) {
+    this.address = await lib.getAddressFromCoordinates(this.coordinates);
+  } else if (this.isModified("address")) {
+    const { lat, lng } = await lib.getCoordinatesFromAddress(this.address);
+    this.coordinates = [lng, lat];
   }
 
   next();
@@ -29,13 +27,13 @@ export class User extends Base {
   @Prop({ required: true })
   email!: string;
 
-  @Prop({ required: true })
+  @Prop()
   address: string;
 
-  @Prop({ required: true, type: () => [Number] })
+  @Prop({ type: () => [Number] })
   coordinates: [number, number];
 
-  @Prop({ required: true, default: [], ref: () => Region, type: () => String })
+  @Prop({ default: [], ref: () => Region, type: () => String })
   regions: Ref<Region>[];
 }
 

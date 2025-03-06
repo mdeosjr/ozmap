@@ -1,59 +1,90 @@
 import { Request, Response } from "express";
-import { STATUS } from "./statusCodes";
 import { UserService } from "../services/userService";
+import { AppError, STATUS_CODE } from "../errors/AppError";
 
 export class UserController {
-  static async create(req: Request, res: Response): Promise<void> {}
+  static async create(req: Request, res: Response): Promise<void> {
+    try {
+      const user = await UserService.create(req.body);
+      res.status(STATUS_CODE.CREATED).json(user);
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res
+          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+          .json({ error: error.message });
+      }
+    }
+  }
 
   static async findAll(req: Request, res: Response): Promise<void> {
     try {
       const { page, limit } = req.query;
-
       const { users, total } = await UserService.findAll();
 
-      res.status(STATUS.OK).json({
+      res.status(STATUS_CODE.OK).json({
         rows: users,
         page,
         limit,
         total,
       });
     } catch (error) {
-      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message });
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res
+          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+          .json({ error: error.message });
+      }
     }
   }
 
   static async findById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-
       const user = await UserService.findById(id);
-
-      if (!user) {
-        res.status(STATUS.NOT_FOUND).json({ message: "User not found" });
-      }
-
-      res.status(STATUS.OK).json(user);
+      res.status(STATUS_CODE.OK).json(user);
     } catch (error) {
-      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message });
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res
+          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+          .json({ error: error.message });
+      }
     }
   }
 
   static async update(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const { update } = req.body;
-
-      const user = await UserService.update(id, update);
-
-      if (!user) {
-        res.status(STATUS.NOT_FOUND).json({ message: "User not found" });
-      }
-
-      res.sendStatus(STATUS.OK);
+      const user = await UserService.update(id, req.body);
+      res.status(STATUS_CODE.OK).json(user);
     } catch (error) {
-      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ error: error.message });
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res
+          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+          .json({ error: error.message });
+      }
     }
   }
 
-  static async delete(req: Request, res: Response): Promise<void> {}
+  static async delete(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      await UserService.delete(id);
+      res.sendStatus(STATUS_CODE.NO_CONTENT);
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res
+          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+          .json({ error: error.message });
+      }
+    }
+  }
 }
