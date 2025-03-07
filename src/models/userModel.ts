@@ -22,19 +22,19 @@ import { Region } from "./regionModel";
 
 export class User extends Base {
   @Prop({ required: true })
-  name!: string;
+  public name!: string;
 
   @Prop({ required: true })
-  email!: string;
+  public email!: string;
 
   @Prop()
-  address: string;
+  public address: string;
 
   @Prop({ type: () => [Number] })
-  coordinates: [number, number];
+  public coordinates: [number, number];
 
-  @Prop({ default: [], ref: () => Region, type: () => String })
-  regions: Ref<Region>[];
+  @Prop({ default: [], ref: () => Region, type: () => Region })
+  public regions: Ref<Region>[];
 }
 
 export const UserModel = getModelForClass(User);

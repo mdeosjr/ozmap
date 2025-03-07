@@ -24,19 +24,16 @@ import { User, UserModel } from "./userModel";
   next(this.validateSync());
 })
 
-@modelOptions({ schemaOptions: { validateBeforeSave: false } })
+@modelOptions({ schemaOptions: { validateBeforeSave: true } })
 export class Region extends Base {
-  @Prop({ required: true, auto: true })
-  _id: string;
-
   @Prop({ required: true })
-  name!: string;
+  public name!: string;
 
   @Prop({required: true})
-  coordinates!: number[][][]
+  public coordinates!: number[][][]
 
-  @Prop({ ref: () => User, required: true, type: () => String })
-  user: Ref<User>;
+  @Prop({ ref: 'User', required: true, type: () => User })
+  public user: Ref<User>;
 }
 
 export const RegionModel = getModelForClass(Region);
