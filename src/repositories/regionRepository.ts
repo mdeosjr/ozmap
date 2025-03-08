@@ -1,8 +1,20 @@
-import { Region, RegionModel } from "../models/regionModel";
+import { GeoJSONPolygon, Region, RegionModel } from "../models/regionModel";
 
 export class RegionRepository {
   static async create(regionData: Partial<Region>): Promise<Region> {
-    return await RegionModel.create(regionData);
+    const region = new RegionModel(regionData);
+
+    return region.save();
+  }
+
+  static async findByCoordinates(polygon: GeoJSONPolygon): Promise<Region | null> {
+    return await RegionModel.findOne({
+      geometry: {
+        $geoWithin: {
+          $geometry: polygon
+        }
+      }
+    });
   }
 
   static async findById(id: string): Promise<Region | null> {
