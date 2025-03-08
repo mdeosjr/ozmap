@@ -5,9 +5,9 @@ import { AppError, STATUS_CODE } from "../errors/AppError";
 export class RegionService {
   static async create(regionData: Partial<Region>): Promise<Region> {
     const existingRegion = await RegionRepository.findByCoordinates(
-      regionData.geometry
+      regionData.geometry,
     );
-    
+
     if (existingRegion) {
       throw new AppError("Region already exists", STATUS_CODE.CONFLICT);
     }

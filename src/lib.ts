@@ -13,7 +13,7 @@ class GeoLib {
   }
 
   private validateCoordinates(
-    coordinates: [number, number] | Coordinates
+    coordinates: [number, number] | Coordinates,
   ): void {
     const lat = Array.isArray(coordinates) ? coordinates[0] : coordinates.lat;
     const lng = Array.isArray(coordinates) ? coordinates[1] : coordinates.lng;
@@ -28,7 +28,7 @@ class GeoLib {
   }
 
   public async getAddressFromCoordinates(
-    coordinates: [number, number] | Coordinates
+    coordinates: [number, number] | Coordinates,
   ): Promise<string> {
     try {
       this.validateCoordinates(coordinates);
@@ -51,7 +51,7 @@ class GeoLib {
   }
 
   public async getCoordinatesFromAddress(
-    address: string
+    address: string,
   ): Promise<Coordinates> {
     try {
       const { data } = await this.client.geocode({

@@ -19,7 +19,6 @@ import { Region } from "./regionModel";
 
   next();
 })
-
 export class User extends Base {
   @Prop({ required: true })
   public name!: string;

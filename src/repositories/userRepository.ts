@@ -22,7 +22,10 @@ export class UserRepository {
     return { users, total };
   }
 
-  static async update(id: string, updateData: Partial<User>): Promise<User | null> {
+  static async update(
+    id: string,
+    updateData: Partial<User>,
+  ): Promise<User | null> {
     const user = await UserModel.findById(id);
 
     Object.assign(user, updateData);

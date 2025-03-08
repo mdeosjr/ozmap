@@ -7,13 +7,15 @@ export class RegionRepository {
     return region.save();
   }
 
-  static async findByCoordinates(polygon: GeoJSONPolygon): Promise<Region | null> {
+  static async findByCoordinates(
+    polygon: GeoJSONPolygon,
+  ): Promise<Region | null> {
     return await RegionModel.findOne({
       geometry: {
         $geoWithin: {
-          $geometry: polygon
-        }
-      }
+          $geometry: polygon,
+        },
+      },
     });
   }
 

@@ -12,12 +12,12 @@ export class UserService {
     if (userData.coordinates && userData.address) {
       throw new AppError(
         "Cannot provide both coordinates and address",
-        STATUS_CODE.BAD_REQUEST
+        STATUS_CODE.BAD_REQUEST,
       );
     } else if (!userData.coordinates && !userData.address) {
       throw new AppError(
         "Must provide either coordinates or address",
-        STATUS_CODE.BAD_REQUEST
+        STATUS_CODE.BAD_REQUEST,
       );
     }
 

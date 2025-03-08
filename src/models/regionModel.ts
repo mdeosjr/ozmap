@@ -31,7 +31,6 @@ export class GeoJSONPolygon {
 
   next(this.validateSync());
 })
-
 @modelOptions({ schemaOptions: { validateBeforeSave: true } })
 export class Region extends Base {
   @Prop({ required: true })

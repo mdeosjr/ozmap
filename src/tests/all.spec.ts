@@ -14,7 +14,7 @@ import server from "../routes";
 describe("Models", () => {
   let user;
   let session;
-  let geoLibStub: Partial<typeof GeoLib> = {};
+  const geoLibStub: Partial<typeof GeoLib> = {};
 
   before(async () => {
     geoLibStub.getAddressFromCoordinates = sinon
