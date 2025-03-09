@@ -10,6 +10,14 @@ import { Base } from "./models";
 import ObjectId = mongoose.Types.ObjectId;
 import { User, UserModel } from "./userModel";
 
+export class GeoJSONPoint {
+  @Prop({ required: true, enum: ["Point"] })
+  public type!: "Point";
+
+  @Prop({ required: true, type: () => [Number] })
+  public coordinates!: number[];
+}
+
 export class GeoJSONPolygon {
   @Prop({ required: true, enum: ["Polygon"] })
   public type!: "Polygon";

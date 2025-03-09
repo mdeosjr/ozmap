@@ -1,4 +1,4 @@
-import { Region } from "../models/regionModel";
+import { GeoJSONPoint, Region } from "../models/regionModel";
 import { RegionRepository } from "../repositories/regionRepository";
 import { AppError, STATUS_CODE } from "../errors/AppError";
 
@@ -31,6 +31,22 @@ export class RegionService {
     }
 
     return region;
+  }
+
+  static async findByPoint(point: string): Promise<Region[]> {
+    const [lat, lng] = point.split(",");
+
+    const geoJson: GeoJSONPoint = {
+      type: "Point",
+      coordinates: [Number(lat), Number(lng)],
+    };
+
+    const regions = await RegionRepository.findByPoint(geoJson);
+    if (regions.length === 0) {
+      throw new AppError("Regions not found", STATUS_CODE.NOT_FOUND);
+    }
+
+    return regions;
   }
 
   static async delete(id: string): Promise<void> {

@@ -1,4 +1,9 @@
-import { GeoJSONPolygon, Region, RegionModel } from "../models/regionModel";
+import {
+  GeoJSONPoint,
+  GeoJSONPolygon,
+  Region,
+  RegionModel,
+} from "../models/regionModel";
 
 export class RegionRepository {
   static async create(regionData: Partial<Region>): Promise<Region> {
@@ -8,12 +13,22 @@ export class RegionRepository {
   }
 
   static async findByCoordinates(
-    polygon: GeoJSONPolygon,
-  ): Promise<Region | null> {
+    coordinates: GeoJSONPolygon,
+  ): Promise<Region[] | null> {
     return await RegionModel.findOne({
       geometry: {
         $geoWithin: {
-          $geometry: polygon,
+          $geometry: coordinates,
+        },
+      },
+    });
+  }
+
+  static async findByPoint(point: GeoJSONPoint): Promise<Region[] | null> {
+    return await RegionModel.find({
+      geometry: {
+        $geoIntersects: {
+          $geometry: point,
         },
       },
     });

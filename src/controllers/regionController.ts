@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { RegionService } from "../services/regionService";
 import { AppError, STATUS_CODE } from "../errors/AppError";
+import { Region } from "../models/regionModel";
 
 export class RegionController {
   static async create(req: Request, res: Response): Promise<void> {
@@ -18,9 +19,13 @@ export class RegionController {
     }
   }
 
-  static async findAll(req: Request, res: Response): Promise<void> {
+  static async find(req: Request, res: Response): Promise<void> {
     try {
-      const regions = await RegionService.findAll();
+      let regions: Region[] | { regions: Region[]; total: number };
+      if (req.query.point) {
+        regions = await RegionService.findByPoint(String(req.query.point));
+      } else regions = await RegionService.findAll();
+
       res.status(STATUS_CODE.OK).json(regions);
     } catch (error) {
       if (error instanceof AppError) {
