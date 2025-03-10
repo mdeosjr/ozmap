@@ -3,6 +3,17 @@ import { RegionRepository } from "../repositories/regionRepository";
 import { AppError, STATUS_CODE } from "../errors/AppError";
 
 export class RegionService {
+  public static makeGeoJsonPoint(point: string) {
+    const [lat, lng] = point.split(",");
+
+    const geoJsonPoint: GeoJSONPoint = {
+      type: "Point",
+      coordinates: [Number(lat), Number(lng)],
+    };
+
+    return geoJsonPoint;
+  }
+
   static async create(regionData: Partial<Region>): Promise<Region> {
     const existingRegion = await RegionRepository.findByCoordinates(
       regionData.geometry,
@@ -34,14 +45,26 @@ export class RegionService {
   }
 
   static async findByPoint(point: string): Promise<Region[]> {
-    const [lat, lng] = point.split(",");
+    const geoJsonPoint = this.makeGeoJsonPoint(point);
 
-    const geoJson: GeoJSONPoint = {
-      type: "Point",
-      coordinates: [Number(lat), Number(lng)],
-    };
+    const regions = await RegionRepository.findByPoint(geoJsonPoint);
+    if (regions.length === 0) {
+      throw new AppError("Regions not found", STATUS_CODE.NOT_FOUND);
+    }
 
-    const regions = await RegionRepository.findByPoint(geoJson);
+    return regions;
+  }
+
+  static async findByDistance(
+    point: string,
+    maxDistance: number,
+  ): Promise<Region[]> {
+    const geoJsonPoint = this.makeGeoJsonPoint(point);
+
+    const regions = await RegionRepository.findByDistance(
+      geoJsonPoint,
+      maxDistance,
+    );
     if (regions.length === 0) {
       throw new AppError("Regions not found", STATUS_CODE.NOT_FOUND);
     }

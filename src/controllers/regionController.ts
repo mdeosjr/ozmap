@@ -21,9 +21,16 @@ export class RegionController {
 
   static async find(req: Request, res: Response): Promise<void> {
     try {
+      const { containsPoint, nearPoint, maxDistance } = req.query;
+
       let regions: Region[] | { regions: Region[]; total: number };
-      if (req.query.point) {
-        regions = await RegionService.findByPoint(String(req.query.point));
+      if (containsPoint) {
+        regions = await RegionService.findByPoint(String(containsPoint));
+      } else if (nearPoint && maxDistance) {
+        regions = await RegionService.findByDistance(
+          String(nearPoint),
+          Number(maxDistance),
+        );
       } else regions = await RegionService.findAll();
 
       res.status(STATUS_CODE.OK).json(regions);
