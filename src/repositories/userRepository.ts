@@ -13,12 +13,15 @@ export class UserRepository {
   }
 
   static async findById(id: string): Promise<User | null> {
-    return await UserModel.findById(id);
+    return await UserModel.findById(id, "-password");
   }
 
-  static async findAll(): Promise<{ users: User[]; total: number }> {
+  static async findAll(
+    offset: number,
+    limit: number,
+  ): Promise<{ users: User[]; total: number }> {
     const [users, total] = await Promise.all([
-      UserModel.find({}, "-password").lean(),
+      UserModel.find({}, "-password").lean().skip(offset).limit(limit),
       UserModel.count(),
     ]);
 

@@ -15,8 +15,8 @@ router.post(
 router.use(AuthMiddleware.validate);
 
 router.get("/", UserController.findAll);
-router.get("/:id", UserController.findById);
-router.put("/:id", UserController.update);
-router.delete("/:id", UserController.delete);
+router.get("/me", UserController.findById);
+router.put("/me", UserController.update);
+router.delete("/me", UserController.delete);
 
 export default router;

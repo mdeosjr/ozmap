@@ -18,8 +18,12 @@ export class UserService {
     return await UserRepository.create(userData);
   }
 
-  static async findAll(): Promise<{ users: User[]; total: number }> {
-    const result = await UserRepository.findAll();
+  static async findAll(
+    page: number,
+    limit: number,
+  ): Promise<{ users: User[]; total: number }> {
+    const offset = (page - 1) * limit;
+    const result = await UserRepository.findAll(offset, limit);
     if (result.total === 0) {
       throw new AppError("No users found", STATUS_CODE.NOT_FOUND);
     }

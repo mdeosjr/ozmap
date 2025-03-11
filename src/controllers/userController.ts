@@ -20,8 +20,11 @@ export class UserController {
 
   static async findAll(req: Request, res: Response): Promise<void> {
     try {
-      const { page, limit } = req.query;
-      const { users, total } = await UserService.findAll();
+      const { page = 1, limit = 10 } = req.query;
+      const { users, total } = await UserService.findAll(
+        parseInt(String(page)),
+        parseInt(String(limit)),
+      );
 
       res.status(STATUS_CODE.OK).json({
         rows: users,
@@ -42,7 +45,7 @@ export class UserController {
 
   static async findById(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
+      const { id } = res.locals.user;
       const user = await UserService.findById(id);
       res.status(STATUS_CODE.OK).json(user);
     } catch (error) {
@@ -58,7 +61,7 @@ export class UserController {
 
   static async update(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
+      const { id } = res.locals.user;
       const user = await UserService.update(id, req.body);
       res.status(STATUS_CODE.OK).json(user);
     } catch (error) {
@@ -74,7 +77,7 @@ export class UserController {
 
   static async delete(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
+      const { id } = res.locals.user;
       await UserService.delete(id);
       res.sendStatus(STATUS_CODE.NO_CONTENT);
     } catch (error) {
