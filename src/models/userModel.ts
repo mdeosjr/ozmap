@@ -23,7 +23,7 @@ export class User extends Base {
   @Prop({ required: true })
   public name!: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   public email!: string;
 
   @Prop()
@@ -34,6 +34,9 @@ export class User extends Base {
 
   @Prop({ default: [], ref: () => Region, type: () => Region })
   public regions: Ref<Region>[];
+
+  @Prop({ required: true })
+  public password!: string;
 }
 
 export const UserModel = getModelForClass(User);

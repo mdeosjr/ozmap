@@ -1,8 +1,11 @@
 import { User, UserModel } from "../models/userModel";
+import { UserInput } from "../schemas/UserInput";
 
 export class UserRepository {
-  static async create(userData: Partial<User>): Promise<User> {
-    return await UserModel.create(userData);
+  static async create(userData: UserInput): Promise<User> {
+    const user = await UserModel.create(userData);
+
+    return UserModel.findById(user._id, "-password");
   }
 
   static async findByEmail(email: string): Promise<User | null> {
@@ -15,7 +18,7 @@ export class UserRepository {
 
   static async findAll(): Promise<{ users: User[]; total: number }> {
     const [users, total] = await Promise.all([
-      UserModel.find().lean(),
+      UserModel.find({}, "-password").lean(),
       UserModel.count(),
     ]);
 

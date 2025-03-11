@@ -1,25 +1,19 @@
 import { User } from "../models/userModel";
 import { UserRepository } from "../repositories/userRepository";
 import { AppError, STATUS_CODE } from "../errors/AppError";
+import { UserInput } from "../schemas/UserInput";
+import bcrypt from "bcrypt";
 
 export class UserService {
-  static async create(userData: Partial<User>): Promise<User> {
+  static async create(userData: UserInput): Promise<User> {
     const existingUser = await UserRepository.findByEmail(userData.email);
     if (existingUser) {
       throw new AppError("User already exists", STATUS_CODE.CONFLICT);
     }
 
-    if (userData.coordinates && userData.address) {
-      throw new AppError(
-        "Cannot provide both coordinates and address",
-        STATUS_CODE.BAD_REQUEST,
-      );
-    } else if (!userData.coordinates && !userData.address) {
-      throw new AppError(
-        "Must provide either coordinates or address",
-        STATUS_CODE.BAD_REQUEST,
-      );
-    }
+    const hashPassword = bcrypt.hashSync(userData.password, 8);
+
+    userData.password = hashPassword;
 
     return await UserRepository.create(userData);
   }
