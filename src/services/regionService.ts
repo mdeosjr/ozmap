@@ -27,8 +27,13 @@ export class RegionService {
     return await RegionRepository.create(regionData);
   }
 
-  static async findAll(): Promise<{ regions: Region[]; total: number }> {
-    const result = await RegionRepository.findAll();
+  static async findAll(
+    page: number,
+    limit: number,
+  ): Promise<{ regions: Region[]; total: number }> {
+    const offset = (page - 1) * limit;
+    const result = await RegionRepository.findAll(offset, limit);
+
     if (result.total === 0) {
       throw new AppError("No regions found", STATUS_CODE.NOT_FOUND);
     }
@@ -59,12 +64,14 @@ export class RegionService {
   static async findByDistance(
     point: string,
     maxDistance: number,
+    userId?: string,
   ): Promise<Region[]> {
     const geoJsonPoint = this.makeGeoJsonPoint(point);
 
     const regions = await RegionRepository.findByDistance(
       geoJsonPoint,
       maxDistance,
+      userId,
     );
     if (regions.length === 0) {
       throw new AppError("Regions not found", STATUS_CODE.NOT_FOUND);
@@ -76,10 +83,15 @@ export class RegionService {
   static async update(
     id: string,
     updatedRegionData: RegionInput,
+    userId: string,
   ): Promise<Region> {
     const existingRegion = await RegionRepository.findById(id);
     if (!existingRegion) {
       throw new AppError("Region not found", STATUS_CODE.NOT_FOUND);
+    }
+
+    if (existingRegion.user.toString() !== userId) {
+      throw new AppError("Not authorized", STATUS_CODE.UNAUTHORIZED);
     }
 
     const updatedRegion = await RegionRepository.findByIdAndUpdate(
@@ -90,10 +102,14 @@ export class RegionService {
     return updatedRegion;
   }
 
-  static async delete(id: string): Promise<void> {
+  static async delete(id: string, userId: string): Promise<void> {
     const region = await RegionRepository.findById(id);
     if (!region) {
       throw new AppError("Region not found", STATUS_CODE.NOT_FOUND);
+    }
+
+    if (region.user.toString() !== userId) {
+      throw new AppError("Not authorized", STATUS_CODE.UNAUTHORIZED);
     }
 
     await RegionRepository.delete(id);

@@ -26,9 +26,18 @@ export class RegionController {
 
   static async findAll(req: Request, res: Response): Promise<void> {
     try {
-      const regions = await RegionService.findAll();
+      const { page = 1, limit = 10 } = req.query;
+      const { regions, total } = await RegionService.findAll(
+        parseInt(String(page)),
+        parseInt(String(limit)),
+      );
 
-      res.status(STATUS_CODE.OK).json(regions);
+      res.status(STATUS_CODE.OK).json({
+        rows: regions,
+        page,
+        limit,
+        total,
+      });
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({ error: error.message });
@@ -42,9 +51,14 @@ export class RegionController {
 
   static async findByPoint(req: Request, res: Response): Promise<void> {
     try {
-      const { containsPoint } = req.query;
+      const { point } = req.query;
 
-      const regions = await RegionService.findByPoint(String(containsPoint));
+      if (!point)
+        res
+          .status(STATUS_CODE.BAD_REQUEST)
+          .json({ error: "Coordinates must be provided!" });
+
+      const regions = await RegionService.findByPoint(String(point));
 
       res.status(STATUS_CODE.OK).json(regions);
     } catch (error) {
@@ -60,11 +74,19 @@ export class RegionController {
 
   static async findByDistance(req: Request, res: Response): Promise<void> {
     try {
-      const { nearPoint, maxDistance } = req.query;
+      const { point, maxDistance, filterRegions } = req.query;
+      const { user } = res.locals;
 
+      if (!point || !maxDistance)
+        res
+          .status(STATUS_CODE.BAD_REQUEST)
+          .json({ error: "Coordinates and distance must be provided!" });
+
+      const userId = filterRegions === "true" ? user.id : undefined;
       const regions = await RegionService.findByDistance(
-        String(nearPoint),
+        String(point),
         Number(maxDistance),
+        userId,
       );
 
       res.status(STATUS_CODE.OK).json(regions);
@@ -98,8 +120,9 @@ export class RegionController {
   static async update(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      const user = await RegionService.update(id, req.body);
-      res.status(STATUS_CODE.OK).json(user);
+      const { user } = res.locals;
+      const region = await RegionService.update(id, req.body, user.id);
+      res.status(STATUS_CODE.OK).json(region);
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({ error: error.message });
@@ -114,7 +137,8 @@ export class RegionController {
   static async delete(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
-      await RegionService.delete(id);
+      const { user } = res.locals;
+      await RegionService.delete(id, user.id);
       res.sendStatus(STATUS_CODE.NO_CONTENT);
     } catch (error) {
       if (error instanceof AppError) {

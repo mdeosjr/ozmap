@@ -37,20 +37,42 @@ export class RegionRepository {
   static async findByDistance(
     point: GeoJSONPoint,
     maxDistance: number,
-  ): Promise<Region[] | null> {
-    return await RegionModel.find({
+    userId?: string,
+  ): Promise<Region[]> {
+    type QueryType = {
+      geometry: {
+        $near: {
+          $geometry: GeoJSONPoint;
+          $maxDistance: number;
+        };
+      };
+      user?: {
+        $ne: string;
+      };
+    };
+
+    const query: QueryType = {
       geometry: {
         $near: {
           $geometry: point,
           $maxDistance: maxDistance,
         },
       },
-    });
+    };
+
+    if (userId) {
+      query.user = { $ne: userId };
+    }
+
+    return await RegionModel.find(query);
   }
 
-  static async findAll(): Promise<{ regions: Region[]; total: number }> {
+  static async findAll(
+    offset: number,
+    limit: number,
+  ): Promise<{ regions: Region[]; total: number }> {
     const [regions, total] = await Promise.all([
-      RegionModel.find().lean(),
+      RegionModel.find().lean().skip(offset).limit(limit),
       RegionModel.count(),
     ]);
 
