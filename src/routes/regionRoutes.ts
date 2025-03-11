@@ -13,8 +13,11 @@ router.post(
   SchemaValidation.validate(createRegionSchema),
   RegionController.create,
 );
-router.get("/", RegionController.find);
+router.get("/", RegionController.findAll);
+router.get("/by-point", RegionController.findByPoint);
+router.get("/by-distance", RegionController.findByDistance);
 router.get("/:id", RegionController.findById);
+router.patch("/:id", RegionController.update);
 router.delete("/:id", RegionController.delete);
 
 export default router;

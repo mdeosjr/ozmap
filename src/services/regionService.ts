@@ -73,6 +73,23 @@ export class RegionService {
     return regions;
   }
 
+  static async update(
+    id: string,
+    updatedRegionData: RegionInput,
+  ): Promise<Region> {
+    const existingRegion = await RegionRepository.findById(id);
+    if (!existingRegion) {
+      throw new AppError("Region not found", STATUS_CODE.NOT_FOUND);
+    }
+
+    const updatedRegion = await RegionRepository.findByIdAndUpdate(
+      id,
+      updatedRegionData,
+    );
+
+    return updatedRegion;
+  }
+
   static async delete(id: string): Promise<void> {
     const region = await RegionRepository.findById(id);
     if (!region) {
