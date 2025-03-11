@@ -16,6 +16,32 @@
       }
     },
     {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Users",
       "item": [
         {
@@ -139,11 +165,15 @@
               {
                 "key": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"São Paulo Region\",\n  \"coordinates\": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]],\n  \"user\": \"user_id_here\"\n}"
+              "raw": "{\n  \"name\": \"São Paulo Region\",\n  \"geometry\": {\n    \"type\": \"Polygon\",\n    \"coordinates\": [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]]\n  }\n}"
             }
           }
         },
@@ -155,7 +185,13 @@
               "raw": "{{baseUrl}}/api/regions",
               "host": ["{{baseUrl}}"],
               "path": ["api", "regions"]
-            }
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
           }
         },
         {
@@ -170,6 +206,62 @@
                 {
                   "key": "id",
                   "value": ""
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Find Regions by Point",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/regions/point?coordinates=-46.6388,23.5504",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions", "point"],
+              "query": [
+                {
+                  "key": "coordinates",
+                  "value": "-46.6388,23.5504"
+                }
+              ],
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Find Regions by Distance",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/regions/distance?coordinates=-46.6388,23.5504&maxDistance=1000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions", "distance"],
+              "query": [
+                {
+                  "key": "coordinates",
+                  "value": "-46.6388,23.5504"
+                },
+                {
+                  "key": "maxDistance",
+                  "value": "1000"
+                }
+              ],
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}"
                 }
               ]
             }
@@ -188,6 +280,12 @@
                   "key": "id",
                   "value": ""
                 }
+              ],
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}"
+                }
               ]
             }
           }
@@ -199,6 +297,11 @@
     {
       "key": "baseUrl",
       "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "seu-token-jwt-aqui",
       "type": "string"
     }
   ]
