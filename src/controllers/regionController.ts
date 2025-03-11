@@ -6,7 +6,13 @@ import { Region } from "../models/regionModel";
 export class RegionController {
   static async create(req: Request, res: Response): Promise<void> {
     try {
-      const region = await RegionService.create(req.body);
+      const { user } = res.locals;
+      const regionData = {
+        ...req.body,
+        user: user.id,
+      };
+
+      const region = await RegionService.create(regionData);
       res.status(STATUS_CODE.CREATED).json(region);
     } catch (error) {
       if (error instanceof AppError) {

@@ -2,11 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 import { AppError, STATUS_CODE } from "../errors/AppError";
 
-interface TokenPayload {
-  id: string;
-  email: string;
-}
-
 export class AuthMiddleware {
   public static validate(
     req: Request,
@@ -22,10 +17,7 @@ export class AuthMiddleware {
     const [, token] = authHeader.split(" ");
 
     try {
-      const decoded = verify(
-        token,
-        process.env.JWT_SECRET || "default-secret",
-      ) as TokenPayload;
+      const decoded = verify(token, process.env.JWT_SECRET || "default-secret");
 
       res.locals.user = decoded;
 

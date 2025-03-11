@@ -1,20 +1,21 @@
 import { GeoJSONPoint, Region } from "../models/regionModel";
 import { RegionRepository } from "../repositories/regionRepository";
 import { AppError, STATUS_CODE } from "../errors/AppError";
+import { RegionInput } from "../schemas/RegionInput";
 
 export class RegionService {
   public static makeGeoJsonPoint(point: string) {
-    const [lat, lng] = point.split(",");
+    const [lng, lat] = point.split(",");
 
     const geoJsonPoint: GeoJSONPoint = {
       type: "Point",
-      coordinates: [Number(lat), Number(lng)],
+      coordinates: [Number(lng), Number(lat)],
     };
 
     return geoJsonPoint;
   }
 
-  static async create(regionData: Partial<Region>): Promise<Region> {
+  static async create(regionData: RegionInput): Promise<Region> {
     const existingRegion = await RegionRepository.findByCoordinates(
       regionData.geometry,
     );
