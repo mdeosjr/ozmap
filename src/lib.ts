@@ -1,10 +1,5 @@
 import { Client } from "@googlemaps/google-maps-services-js";
 
-interface Coordinates {
-  lat: number;
-  lng: number;
-}
-
 class GeoLib {
   private readonly client: Client;
 
@@ -12,11 +7,9 @@ class GeoLib {
     this.client = new Client({});
   }
 
-  private validateCoordinates(
-    coordinates: [number, number] | Coordinates,
-  ): void {
-    const lat = Array.isArray(coordinates) ? coordinates[0] : coordinates.lat;
-    const lng = Array.isArray(coordinates) ? coordinates[1] : coordinates.lng;
+  private validateCoordinates(coordinates: [number, number]): void {
+    const lat = Array.isArray(coordinates) && coordinates[0];
+    const lng = Array.isArray(coordinates) && coordinates[1];
 
     if (lat < -90 || lat > 90) {
       throw new Error("Latitude must be between -90 and 90 degrees");
@@ -28,7 +21,7 @@ class GeoLib {
   }
 
   public async getAddressFromCoordinates(
-    coordinates: [number, number] | Coordinates,
+    coordinates: [number, number],
   ): Promise<string> {
     try {
       this.validateCoordinates(coordinates);
@@ -52,7 +45,7 @@ class GeoLib {
 
   public async getCoordinatesFromAddress(
     address: string,
-  ): Promise<Coordinates> {
+  ): Promise<{ lat: number; lng: number }> {
     try {
       const { data } = await this.client.geocode({
         params: {

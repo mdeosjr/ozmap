@@ -2,7 +2,7 @@ import { sign } from "jsonwebtoken";
 import { compareSync } from "bcrypt";
 import { UserRepository } from "../repositories/userRepository";
 import { AppError, STATUS_CODE } from "../errors/AppError";
-import { LoginInput } from "../schemas/AuthInput";
+import { LoginInput } from "../types/authTypes";
 
 export class AuthService {
   static async login({ email, password }: LoginInput): Promise<string> {

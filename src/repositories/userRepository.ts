@@ -32,10 +32,9 @@ export class UserRepository {
     id: string,
     updateData: Partial<User>,
   ): Promise<User | null> {
-    const user = await UserModel.findById(id);
+    const user = await UserModel.findByIdAndUpdate(id, updateData);
 
-    Object.assign(user, updateData);
-    return await user.save();
+    return user;
   }
 
   static async delete(id: string): Promise<void> {

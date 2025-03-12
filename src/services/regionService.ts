@@ -1,7 +1,7 @@
 import { GeoJSONPoint, Region } from "../models/regionModel";
 import { RegionRepository } from "../repositories/regionRepository";
 import { AppError, STATUS_CODE } from "../errors/AppError";
-import { RegionInput } from "../schemas/RegionInput";
+import { CreateRegionInput, UpdateRegionInput } from "../types/regionTypes";
 
 export class RegionService {
   public static makeGeoJsonPoint(point: string) {
@@ -15,7 +15,7 @@ export class RegionService {
     return geoJsonPoint;
   }
 
-  static async create(regionData: RegionInput): Promise<Region> {
+  static async create(regionData: CreateRegionInput): Promise<Region> {
     const existingRegion = await RegionRepository.findByCoordinates(
       regionData.geometry,
     );
@@ -82,7 +82,7 @@ export class RegionService {
 
   static async update(
     id: string,
-    updatedRegionData: RegionInput,
+    updatedRegionData: UpdateRegionInput,
     userId: string,
   ): Promise<Region> {
     const existingRegion = await RegionRepository.findById(id);

@@ -1,15 +1,15 @@
 import { GeoJSONPoint, Region, RegionModel } from "../models/regionModel";
-import { RegionInput } from "../schemas/RegionInput";
+import { CreateRegionInput, UpdateRegionInput } from "../types/regionTypes";
 
 export class RegionRepository {
-  static async create(regionData: RegionInput): Promise<Region> {
+  static async create(regionData: CreateRegionInput): Promise<Region> {
     const region = await RegionModel.create(regionData);
 
     return await RegionModel.findById(region._id);
   }
 
   static async findByCoordinates(
-    coordinates: RegionInput["geometry"],
+    coordinates: CreateRegionInput["geometry"],
   ): Promise<Region | null> {
     return await RegionModel.findOne({
       geometry: {
@@ -81,7 +81,7 @@ export class RegionRepository {
 
   static async findByIdAndUpdate(
     id: string,
-    updateData: RegionInput,
+    updateData: UpdateRegionInput,
   ): Promise<Region | null> {
     return await RegionModel.findByIdAndUpdate(id, updateData);
   }

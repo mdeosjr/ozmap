@@ -4,6 +4,7 @@ import {
   Prop,
   Ref,
   DocumentType,
+  modelOptions,
 } from "@typegoose/typegoose";
 import lib from "../lib";
 import { Base } from "./models";
@@ -19,6 +20,7 @@ import { Region } from "./regionModel";
 
   next();
 })
+@modelOptions({ schemaOptions: { validateBeforeSave: true } })
 export class User extends Base {
   @Prop({ required: true })
   public name!: string;
