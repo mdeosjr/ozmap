@@ -8,7 +8,9 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}
-      - MONGO_URI=mongodb://mongodb:27017/ozmap-tech-test?authSource=admin
+      - MONGO_URI=mongodb://mongodb:27017/ozmap-tech-test?authSource=admin&?replicaSet=rs0
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - MAPS_API_KEY=${MAPS_API_KEY}
     depends_on:
       - mongodb
     networks:
@@ -17,12 +19,20 @@ services:
 
   mongodb:
     image: mongo:7
+    command: ["mongod", "--replSet", "rs0"]
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
     environment:
       - MONGO_INITDB_DATABASE=ozmap-tech-test
+    healthcheck:
+      test: |
+        mongosh --eval "try { rs.status().ok } catch (e) { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'localhost:27017' }] }).ok }"
+      start_period: 0s
+      interval: 500ms
+      timeout: 5s
+      retries: 5
     networks:
       - oz-network
 
