@@ -11,12 +11,12 @@ router.post(
   SchemaValidation.validate(createUserSchema),
   UserController.create,
 );
+router.get("/", UserController.findAll);
 
 router.use(AuthMiddleware.validate);
 
-router.get("/", UserController.findAll);
 router.get("/me", UserController.findById);
-router.put(
+router.patch(
   "/me",
   SchemaValidation.validate(updateUserSchema),
   UserController.update,

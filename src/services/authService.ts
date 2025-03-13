@@ -30,7 +30,7 @@ export class AuthService {
       },
     );
 
-    logger.info({ userId: user._id }, "User logged in successfully");
+    logger.info({ userId: user._id }, `User ${user.name} in successfully`);
     return token;
   }
 }

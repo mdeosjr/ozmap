@@ -11,13 +11,22 @@ export class AuthMiddleware {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      throw new AppError("JWT token is missing", STATUS_CODE.UNAUTHORIZED);
+      throw new AppError(
+        "Authorization header is missing",
+        STATUS_CODE.UNAUTHORIZED,
+      );
     }
 
     const [, token] = authHeader.split(" ");
+    if (!token) {
+      throw new AppError("JWT token is missing", STATUS_CODE.UNAUTHORIZED);
+    }
 
     try {
-      const decoded = verify(token, process.env.JWT_SECRET || "default-secret");
+      const decoded = verify(
+        token,
+        process.env.JWT_SECRET_KEY || "default-secret",
+      );
 
       res.locals.user = decoded;
 
