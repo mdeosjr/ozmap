@@ -1,10 +1,23 @@
 import mongoose from "mongoose";
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "path";
+
+const env = process.env.NODE_ENV || "development";
+const envFile = env === "test" ? ".env.test" : ".env";
+
+dotenv.config({
+  path: path.resolve(__dirname, "..", envFile),
+});
 
 const MONGO_URI = process.env.MONGO_URI;
 
 export const connectDB = async function (): Promise<void> {
   try {
+    if (env === "test") {
+      console.log("Test environment detected, using in-memory database");
+      return;
+    }
+
     await mongoose.connect(MONGO_URI);
     console.log("Connected to MongoDB");
   } catch (error) {
