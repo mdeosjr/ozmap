@@ -10,7 +10,7 @@ const coordinatesSchema = z
   )
   .nonempty();
 
-export const createRegionSchema = z.object({
+const regionBaseSchema = z.object({
   name: z.string().min(1),
   geometry: z.object({
     type: z.literal("Polygon"),
@@ -18,4 +18,6 @@ export const createRegionSchema = z.object({
   }),
 });
 
-export type RegionInput = z.infer<typeof createRegionSchema>;
+export const createRegionSchema = regionBaseSchema;
+
+export const updateRegionSchema = regionBaseSchema.partial();

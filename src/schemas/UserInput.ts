@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const userSchema = z.object({
+const userBaseSchema = z.object({
   name: z.string().min(1),
   email: z.string().email().min(1),
   password: z.string().min(1),
@@ -10,7 +10,7 @@ const userSchema = z.object({
     .optional(),
 });
 
-export const createUserSchema = userSchema.refine(
+export const createUserSchema = userBaseSchema.refine(
   (data) => {
     const hasAddress = data.address !== undefined;
     const hasCoordinates = data.coordinates !== undefined;
@@ -21,4 +21,13 @@ export const createUserSchema = userSchema.refine(
   },
 );
 
-export type UserInput = z.infer<typeof createUserSchema>;
+export const updateUserSchema = userBaseSchema.partial().refine(
+  (data) => {
+    const hasAddress = data.address !== undefined;
+    const hasCoordinates = data.coordinates !== undefined;
+    return !(hasAddress && hasCoordinates);
+  },
+  {
+    message: "Provide only address or coordinates, not both!",
+  },
+);

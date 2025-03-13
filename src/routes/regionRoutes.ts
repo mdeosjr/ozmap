@@ -2,7 +2,7 @@ import { Router } from "express";
 import { RegionController } from "../controllers/regionController";
 import { AuthMiddleware } from "../middlewares/authMiddleware";
 import { SchemaValidation } from "../middlewares/validateSchema";
-import { createRegionSchema } from "../schemas/RegionInput";
+import { createRegionSchema, updateRegionSchema } from "../schemas/RegionInput";
 
 const router = Router();
 
@@ -18,7 +18,11 @@ router.post(
   SchemaValidation.validate(createRegionSchema),
   RegionController.create,
 );
-router.patch("/:id", RegionController.update);
+router.patch(
+  "/:id",
+  SchemaValidation.validate(updateRegionSchema),
+  RegionController.update,
+);
 router.delete("/:id", RegionController.delete);
 
 export default router;
