@@ -1,8 +1,10 @@
 import { GeoJSONPoint, Region } from "../models/regionModel";
 import { RegionRepository } from "../repositories/regionRepository";
+import { UserRepository } from "../repositories/userRepository";
 import { AppError, STATUS_CODE } from "../errors/AppError";
 import { CreateRegionInput, UpdateRegionInput } from "../types/regionTypes";
 import logger from "../config/logger";
+import mongoose from "mongoose";
 
 export class RegionService {
   public static makeGeoJsonPoint(point: string) {
@@ -35,10 +37,6 @@ export class RegionService {
     }
 
     const region = await RegionRepository.create(regionData);
-    logger.info(
-      { regionId: region._id, userId: regionData.user },
-      "Region created successfully",
-    );
 
     return region;
   }
@@ -166,6 +164,31 @@ export class RegionService {
       throw new AppError("Not authorized", STATUS_CODE.UNAUTHORIZED);
     }
 
-    await RegionRepository.delete(id);
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      await UserRepository.deleteRegionFromUser(
+        region.user.toString(),
+        id,
+        session,
+      );
+
+      await RegionRepository.delete(id, session);
+
+      await session.commitTransaction();
+    } catch (err) {
+      logger.error(
+        { regionId: id, user: userId, error: err },
+        "Error deleting region",
+      );
+      await session.abortTransaction();
+      throw new AppError(
+        "Failed to delete region",
+        STATUS_CODE.INTERNAL_SERVER_ERROR,
+      );
+    } finally {
+      session.endSession();
+    }
   }
 }

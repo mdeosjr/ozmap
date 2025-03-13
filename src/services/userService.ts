@@ -4,6 +4,8 @@ import { AppError, STATUS_CODE } from "../errors/AppError";
 import { CreateUserInput } from "../types/userTypes";
 import bcrypt from "bcrypt";
 import logger from "../config/logger";
+import mongoose from "mongoose";
+import { RegionRepository } from "../repositories/regionRepository";
 
 export class UserService {
   static async create(userData: CreateUserInput): Promise<User> {
@@ -64,6 +66,29 @@ export class UserService {
       throw new AppError("User not found", STATUS_CODE.NOT_FOUND);
     }
 
-    await UserRepository.delete(id);
+    if (user.regions.length === 0) {
+      logger.info({ userId: id }, "User has no regions");
+      return await UserRepository.delete(id);
+    }
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      await RegionRepository.deleteMany(user._id, session);
+
+      await UserRepository.delete(id, session);
+
+      await session.commitTransaction();
+    } catch (err) {
+      logger.error({ user: user._id, error: err }, "Error deleting user");
+      await session.abortTransaction();
+      throw new AppError(
+        "Failed to delete user",
+        STATUS_CODE.INTERNAL_SERVER_ERROR,
+      );
+    } finally {
+      session.endSession();
+    }
   }
 }

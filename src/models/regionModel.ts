@@ -32,9 +32,11 @@ export class GeoJSONPolygon {
   }
 
   if (this.isNew) {
+    const session = this.$session();
     const user = await UserModel.findById({ _id: this.user });
+
     user.regions.push(this._id);
-    await user.save({ session: this.$session() });
+    await user.save({ session });
   }
 
   next(this.validateSync());

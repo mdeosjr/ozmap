@@ -1,8 +1,9 @@
+import mongoose from "mongoose";
 import { User, UserModel } from "../models/userModel";
-import { UserInput } from "../schemas/UserInput";
+import { CreateUserInput } from "../types/userTypes";
 
 export class UserRepository {
-  static async create(userData: UserInput): Promise<User> {
+  static async create(userData: CreateUserInput): Promise<User> {
     const user = await UserModel.create(userData);
 
     return UserModel.findById(user._id, "-password");
@@ -37,7 +38,22 @@ export class UserRepository {
     return user;
   }
 
-  static async delete(id: string): Promise<void> {
-    await UserModel.findByIdAndDelete(id);
+  static async delete(
+    id: string,
+    session?: mongoose.ClientSession,
+  ): Promise<void> {
+    await UserModel.findByIdAndDelete(id, { session });
+  }
+
+  static async deleteRegionFromUser(
+    userId: string,
+    regionId: string,
+    session: mongoose.ClientSession,
+  ): Promise<void> {
+    await UserModel.findByIdAndUpdate(
+      userId,
+      { $pull: { regions: regionId } },
+      { session },
+    );
   }
 }

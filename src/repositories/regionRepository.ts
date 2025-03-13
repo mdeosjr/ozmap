@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { GeoJSONPoint, Region, RegionModel } from "../models/regionModel";
 import { CreateRegionInput, UpdateRegionInput } from "../types/regionTypes";
 
@@ -86,7 +87,17 @@ export class RegionRepository {
     return await RegionModel.findByIdAndUpdate(id, updateData);
   }
 
-  static async delete(id: string): Promise<void> {
-    await RegionModel.findByIdAndDelete(id);
+  static async delete(
+    id: string,
+    session: mongoose.ClientSession,
+  ): Promise<void> {
+    await RegionModel.findByIdAndDelete(id, { session });
+  }
+
+  static async deleteMany(
+    userId: string,
+    session: mongoose.ClientSession,
+  ): Promise<void> {
+    await RegionModel.deleteMany({ user: userId }, { session });
   }
 }
