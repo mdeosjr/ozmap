@@ -3,11 +3,16 @@ import { UserRepository } from "../repositories/userRepository";
 import { AppError, STATUS_CODE } from "../errors/AppError";
 import { CreateUserInput } from "../types/userTypes";
 import bcrypt from "bcrypt";
+import logger from "../config/logger";
 
 export class UserService {
   static async create(userData: CreateUserInput): Promise<User> {
     const existingUser = await UserRepository.findByEmail(userData.email);
     if (existingUser) {
+      logger.warn(
+        { email: userData.email },
+        "Attempted to create user with existing email",
+      );
       throw new AppError("User already exists", STATUS_CODE.CONFLICT);
     }
 
@@ -25,6 +30,7 @@ export class UserService {
     const offset = (page - 1) * limit;
     const result = await UserRepository.findAll(offset, limit);
     if (result.total === 0) {
+      logger.warn("No users found in database");
       throw new AppError("No users found", STATUS_CODE.NOT_FOUND);
     }
 
@@ -34,6 +40,7 @@ export class UserService {
   static async findById(id: string): Promise<User> {
     const user = await UserRepository.findById(id);
     if (!user) {
+      logger.warn({ userId: id }, "User not found");
       throw new AppError("User not found", STATUS_CODE.NOT_FOUND);
     }
 
@@ -43,6 +50,7 @@ export class UserService {
   static async update(id: string, updateData: Partial<User>): Promise<User> {
     const user = await UserRepository.findById(id);
     if (!user) {
+      logger.warn({ userId: id }, "Attempted to update non-existent user");
       throw new AppError("User not found", STATUS_CODE.NOT_FOUND);
     }
 
@@ -52,6 +60,7 @@ export class UserService {
   static async delete(id: string): Promise<void> {
     const user = await UserRepository.findById(id);
     if (!user) {
+      logger.warn({ userId: id }, "Attempted to delete non-existent user");
       throw new AppError("User not found", STATUS_CODE.NOT_FOUND);
     }
 

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import path from "path";
+import logger from "./config/logger";
 
 const env = process.env.NODE_ENV || "development";
 const envFile = env === "test" ? ".env.test" : ".env";
@@ -14,19 +15,23 @@ const MONGO_URI = process.env.MONGO_URI;
 export const connectDB = async function (): Promise<void> {
   try {
     if (env === "test") {
-      console.log("Test environment detected, using in-memory database");
+      logger.info("Test environment detected, using in-memory database");
       return;
     }
 
     await mongoose.connect(MONGO_URI);
-    console.log("Connected to MongoDB");
+    logger.info("Connected to MongoDB successfully");
   } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
+    logger.error(error, "Error connecting to MongoDB");
     process.exit(1);
   }
 };
 
 export const disconnectDB = async function (): Promise<void> {
-  await mongoose.disconnect();
-  console.log("MongoDB disconnected");
+  try {
+    await mongoose.disconnect();
+    logger.info("MongoDB disconnected successfully");
+  } catch (error) {
+    logger.error(error, "Error disconnecting from MongoDB");
+  }
 };
