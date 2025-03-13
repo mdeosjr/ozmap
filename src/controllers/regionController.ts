@@ -1,9 +1,13 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { RegionService } from "../services/regionService";
-import { AppError, STATUS_CODE } from "../errors/AppError";
+import { STATUS_CODE } from "../errors/AppError";
 
 export class RegionController {
-  static async create(req: Request, res: Response): Promise<void> {
+  static async create(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { user } = res.locals;
       const regionData = {
@@ -14,17 +18,15 @@ export class RegionController {
       const region = await RegionService.create(regionData);
       res.status(STATUS_CODE.CREATED).json(region);
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-      } else {
-        res
-          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-          .json({ error: error.message });
-      }
+      next(error);
     }
   }
 
-  static async findAll(req: Request, res: Response): Promise<void> {
+  static async findAll(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { page = 1, limit = 10 } = req.query;
       const { regions, total } = await RegionService.findAll(
@@ -39,17 +41,15 @@ export class RegionController {
         total,
       });
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-      } else {
-        res
-          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-          .json({ error: error.message });
-      }
+      next(error);
     }
   }
 
-  static async findByPoint(req: Request, res: Response): Promise<void> {
+  static async findByPoint(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { point } = req.query;
 
@@ -61,18 +61,18 @@ export class RegionController {
       const regions = await RegionService.findByPoint(String(point));
 
       res.status(STATUS_CODE.OK).json(regions);
+
+      res.status(STATUS_CODE.OK).json(regions);
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-      } else {
-        res
-          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-          .json({ error: error.message });
-      }
+      next(error);
     }
   }
 
-  static async findByDistance(req: Request, res: Response): Promise<void> {
+  static async findByDistance(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { point, maxDistance, filterRegions } = req.query;
       const { user } = res.locals;
@@ -91,63 +91,51 @@ export class RegionController {
 
       res.status(STATUS_CODE.OK).json(regions);
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-      } else {
-        res
-          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-          .json({ error: error.message });
-      }
+      next(error);
     }
   }
 
-  static async findById(req: Request, res: Response): Promise<void> {
+  static async findById(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { id } = req.params;
       const region = await RegionService.findById(id);
       res.status(STATUS_CODE.OK).json(region);
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-      } else {
-        res
-          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-          .json({ error: error.message });
-      }
+      next(error);
     }
   }
 
-  static async update(req: Request, res: Response): Promise<void> {
+  static async update(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { id } = req.params;
       const { user } = res.locals;
       const region = await RegionService.update(id, req.body, user.id);
       res.status(STATUS_CODE.OK).json(region);
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-      } else {
-        res
-          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-          .json({ error: error.message });
-      }
+      next(error);
     }
   }
 
-  static async delete(req: Request, res: Response): Promise<void> {
+  static async delete(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> {
     try {
       const { id } = req.params;
       const { user } = res.locals;
       await RegionService.delete(id, user.id);
       res.sendStatus(STATUS_CODE.NO_CONTENT);
     } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({ error: error.message });
-      } else {
-        res
-          .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
-          .json({ error: error.message });
-      }
+      next(error);
     }
   }
 }
