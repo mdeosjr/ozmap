@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { User, UserModel } from "../models/userModel";
-import { CreateUserInput } from "../types/userTypes";
+import { CreateUserInput, UpdateUserInput } from "../types/userTypes";
 
 export class UserRepository {
   static async create(userData: CreateUserInput): Promise<User> {
@@ -31,10 +31,11 @@ export class UserRepository {
 
   static async update(
     id: string,
-    updateData: Partial<User>,
+    updateData: UpdateUserInput,
   ): Promise<User | null> {
-    const user = await UserModel.findByIdAndUpdate(id, updateData);
+    await UserModel.findByIdAndUpdate(id, updateData);
 
+    const user = await UserModel.findById(id, "-password");
     return user;
   }
 

@@ -1,7 +1,7 @@
 import { User } from "../models/userModel";
 import { UserRepository } from "../repositories/userRepository";
 import { AppError, STATUS_CODE } from "../errors/AppError";
-import { CreateUserInput } from "../types/userTypes";
+import { CreateUserInput, UpdateUserInput } from "../types/userTypes";
 import bcrypt from "bcrypt";
 import logger from "../config/logger";
 import mongoose from "mongoose";
@@ -49,7 +49,7 @@ export class UserService {
     return user;
   }
 
-  static async update(id: string, updateData: Partial<User>): Promise<User> {
+  static async update(id: string, updateData: UpdateUserInput): Promise<User> {
     const user = await UserRepository.findById(id);
     if (!user) {
       logger.warn({ userId: id }, "Attempted to update non-existent user");

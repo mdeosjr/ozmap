@@ -6,7 +6,7 @@ import {
   DocumentType,
   modelOptions,
 } from "@typegoose/typegoose";
-import lib from "../lib";
+import lib from "../libs/geoLib";
 import { Base } from "./models";
 import { Region } from "./regionModel";
 
