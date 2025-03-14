@@ -33,3 +33,5 @@ const init = async (): Promise<void> => {
 };
 
 init();
+
+export default server;

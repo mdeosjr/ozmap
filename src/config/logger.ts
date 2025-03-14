@@ -9,9 +9,20 @@ const transport = pino.transport({
   },
 });
 
+const logLevel = (NODE_ENV: string) => {
+  switch (NODE_ENV) {
+    case "development":
+      return "debug";
+    case "test":
+      return "silent";
+    default:
+      return "info";
+  }
+};
+
 const logger = pino(
   {
-    level: process.env.NODE_ENV === "development" ? "debug" : "info",
+    level: logLevel(process.env.NODE_ENV),
     base: undefined,
   },
   transport,
