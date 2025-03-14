@@ -320,10 +320,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@faker-js/faker@npm:^8.1.0":
-  version: 8.1.0
-  resolution: "@faker-js/faker@npm:8.1.0"
-  checksum: 10c0/e930fdebe46414174093f534418836e0fdd70c027caa25fbd2fa816f62f855616238402270c5a0033df987da8e8c97029820997788f1d6115ff1b7dc635bd00d
+"@faker-js/faker@npm:^9.6.0":
+  version: 9.6.0
+  resolution: "@faker-js/faker@npm:9.6.0"
+  checksum: 10c0/57f76aba8744ac5f588bfcf55e61ab6f1b61664f0d1cd6cc9d9ae5bf9376bdb48d867487ace638bee393de126257b7fe6ebd602c9efd3346e7ee10e8643f1cdc
   languageName: node
   linkType: hard
 
@@ -756,18 +756,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express-serve-static-core@npm:^4.17.33":
-  version: 4.17.37
-  resolution: "@types/express-serve-static-core@npm:4.17.37"
-  dependencies:
-    "@types/node": "npm:*"
-    "@types/qs": "npm:*"
-    "@types/range-parser": "npm:*"
-    "@types/send": "npm:*"
-  checksum: 10c0/45487318802d9c44aac4323b9f5b33c24bb37c0258a5984c8ffe2b57f1bfc5b8ebbdc47149d6ce1b9e47e39b6cc4d1ef4468903a339990bfb8eac7995392f19f
-  languageName: node
-  linkType: hard
-
 "@types/express-serve-static-core@npm:^5.0.0":
   version: 5.0.6
   resolution: "@types/express-serve-static-core@npm:5.0.6"
@@ -780,7 +768,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express@npm:*":
+"@types/express@npm:*, @types/express@npm:^5.0.0":
   version: 5.0.0
   resolution: "@types/express@npm:5.0.0"
   dependencies:
@@ -789,18 +777,6 @@ __metadata:
     "@types/qs": "npm:*"
     "@types/serve-static": "npm:*"
   checksum: 10c0/0d74b53aefa69c3b3817ee9b5145fd50d7dbac52a8986afc2d7500085c446656d0b6dc13158c04e2d9f18f4324d4d93b0452337c5ff73dd086dca3e4ff11f47b
-  languageName: node
-  linkType: hard
-
-"@types/express@npm:^4.17.18":
-  version: 4.17.18
-  resolution: "@types/express@npm:4.17.18"
-  dependencies:
-    "@types/body-parser": "npm:*"
-    "@types/express-serve-static-core": "npm:^4.17.33"
-    "@types/qs": "npm:*"
-    "@types/serve-static": "npm:*"
-  checksum: 10c0/6babf7bce6abdd45138f7eac058c8705dbd3a2857208c8c78d863fcd8b3b212c6569fba1f748137e5743287f82dfecf9bc4d78d31d290afff2d37700a0cdb6fe
   languageName: node
   linkType: hard
 
@@ -4430,13 +4406,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "oztest@workspace:."
   dependencies:
-    "@faker-js/faker": "npm:^8.1.0"
+    "@faker-js/faker": "npm:^9.6.0"
     "@googlemaps/google-maps-services-js": "npm:^3.4.0"
     "@typegoose/typegoose": "npm:^11.5.0"
     "@types/bcrypt": "npm:^5"
     "@types/chai": "npm:^5"
     "@types/cors": "npm:^2.8.17"
-    "@types/express": "npm:^4.17.18"
+    "@types/express": "npm:^5.0.0"
     "@types/jsonwebtoken": "npm:^9"
     "@types/mocha": "npm:^10.0.2"
     "@types/node": "npm:^20.8.0"
@@ -4470,7 +4446,7 @@ __metadata:
     sinon-chai: "npm:^4.0.0"
     supertest: "npm:^6.3.3"
     swagger-jsdoc: "npm:^6.2.8"
-    swagger-ui-express: "npm:^5.0.0"
+    swagger-ui-express: "npm:^5.0.1"
     ts-node: "npm:^10.9.1"
     ts-node-dev: "npm:^2.0.0"
     typescript: "npm:^5.2.2"
@@ -5666,7 +5642,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swagger-ui-express@npm:^5.0.0":
+"swagger-ui-express@npm:^5.0.1":
   version: 5.0.1
   resolution: "swagger-ui-express@npm:5.0.1"
   dependencies:
