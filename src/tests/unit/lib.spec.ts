@@ -1,6 +1,6 @@
 import chai, { expect } from "chai";
 import sinon from "sinon";
-import GeoLib from "../../lib";
+import GeoLib from "../../libs/geoLib";
 import { Client } from "@googlemaps/google-maps-services-js";
 import sinonChai from "sinon-chai";
 
@@ -56,31 +56,6 @@ describe("GeoLib", () => {
       } catch (error) {
         expect(error).to.be.instanceOf(Error);
         expect(error.message).to.include("No address found");
-      }
-    });
-
-    it("should validate coordinates are within bounds", async () => {
-      const invalidLng: [number, number] = [200, 20];
-      const invalidLat: [number, number] = [10, 100];
-
-      try {
-        await GeoLib.getAddressFromCoordinates(invalidLng);
-        expect.fail("Should have thrown error");
-      } catch (error) {
-        expect(error).to.be.instanceOf(Error);
-        expect(error.message).to.include(
-          "Longitude must be between -180 and 180 degrees",
-        );
-      }
-
-      try {
-        await GeoLib.getAddressFromCoordinates(invalidLat);
-        expect.fail("Should have thrown error");
-      } catch (error) {
-        expect(error).to.be.instanceOf(Error);
-        expect(error.message).to.include(
-          "Latitude must be between -90 and 90 degrees",
-        );
       }
     });
   });

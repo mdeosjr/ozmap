@@ -1,6 +1,5 @@
 import { faker } from "@faker-js/faker";
 import { Region } from "../../models/regionModel";
-import { CreateRegionInput } from "../../types/regionTypes";
 
 export const generatePolygon = (): number[][][] => {
   const centerLng = faker.location.longitude();
@@ -20,12 +19,27 @@ export const generatePolygon = (): number[][][] => {
   return coordinates;
 };
 
-export const mockRegion = (userId: string): CreateRegionInput => ({
-  name: faker.location.city(),
-  geometry: {
-    type: "Polygon",
-    coordinates: generatePolygon(),
-  },
+export const mockValidPolygon = (centerPoint = [-46.6388, -23.5504]) => {
+  const [centerLng, centerLat] = centerPoint;
+  const offset = 0.01;
+
+  return {
+    type: "Polygon" as const,
+    coordinates: [
+      [
+        [centerLng - offset, centerLat - offset],
+        [centerLng + offset, centerLat - offset],
+        [centerLng + offset, centerLat + offset],
+        [centerLng - offset, centerLat + offset],
+        [centerLng - offset, centerLat - offset],
+      ],
+    ],
+  };
+};
+
+export const mockRegion = (userId: string, centerPoint?: number[]) => ({
+  name: "Test Region",
+  geometry: mockValidPolygon(centerPoint),
   user: userId,
 });
 
@@ -40,9 +54,8 @@ export const generateMockRegionWithId = (userId: string): Region => {
   };
 };
 
-export const generatePoint = (insidePolygon = true) => {
+export const generatePoint = (insidePolygon = true, polygon: number[][][]) => {
   if (insidePolygon) {
-    const polygon = generatePolygon();
     const centerLng = (polygon[0][0][0] + polygon[0][2][0]) / 2;
     const centerLat = (polygon[0][0][1] + polygon[0][2][1]) / 2;
     return { type: "Point", coordinates: [centerLng, centerLat] };
