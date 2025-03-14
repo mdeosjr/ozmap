@@ -1,82 +1,182 @@
-# OZmap Challenge: Construindo a Geolocalização do Futuro
+# OZmap Challenge: API de Geolocalização
 
-Olá desenvolvedor(a)! Bem-vindo(a) ao Desafio Técnico do OZmap. Este é um projeto que simula um cenário real de nossa empresa, onde você irá desempenhar um papel crucial ao desenvolver uma API RESTful robusta para gerenciar usuários e localizações. Estamos muito animados para ver sua abordagem e solução!
+Bem-vindo ao projeto de API de Geolocalização OZmap. Este projeto implementa uma API RESTful para gerenciar usuários e regiões geográficas com funcionalidades completas de geolocalização.
 
-## 🌍 **Visão Geral**
+## 📋 Índice
 
-Em um mundo conectado e globalizado, a geolocalização se torna cada vez mais essencial. E aqui no OZmap, buscamos sempre otimizar e melhorar nossos sistemas. Assim, você encontrará um protótipo que precisa de sua experiência para ser corrigido, melhorado e levado ao próximo nível.
+- [Visão Geral](#visão-geral)
+- [Tecnologias Utilizadas](#tecnologias-utilizadas)
+- [Configuração do Ambiente](#configuração-do-ambiente)
+- [Executando a Aplicação](#executando-a-aplicação)
+- [Executando os Testes](#executando-os-testes)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Funcionalidades Implementadas](#funcionalidades-implementadas)
+- [Documentação da API](#documentação-da-api)
 
-## 🛠 **Especificações Técnicas**
+## 👀 Visão Geral
 
-- **Node.js**: Versão 20 ou superior.
-- **Banco de Dados**: Mongo 7+.
-- **ORM**: Mongoose / Typegoose.
-- **Linguagem**: Typescript.
-- **Formatação e Linting**: Eslint + prettier.
-- **Comunicação com MongoDB**: Deve ser feita via container.
+Em um mundo conectado e globalizado, a geolocalização se torna cada vez mais essencial. Esta API permite gerenciar usuários e regiões geográficas, com funcionalidades de transformação entre endereços e coordenadas, além de pesquisas espaciais avançadas.
 
-## 🔍 **Funcionalidades Esperadas**
+## 🚀 Tecnologias Utilizadas
+
+- **Node.js**: v20+
+- **TypeScript**: Tipagem estática para maior segurança
+- **MongoDB**: Banco de dados NoSQL com suporte a operações geoespaciais
+- **Mongoose/Typegoose**: ORM para MongoDB com suporte a tipos TypeScript
+- **Express**: Framework para APIs RESTful
+- **JWT**: Autenticação baseada em tokens
+- **Google Maps API**: Serviços de geocodificação
+- **Jest/Mocha/Chai**: Ferramentas para testes unitários e de integração
+- **Swagger**: Documentação automática da API
+- **Docker**: Conteinerização do ambiente de desenvolvimento
+- **Pino**: Sistema de logs estruturados
+
+## 🛠️ Configuração do Ambiente
+
+### Pré-requisitos
+
+- Node.js v20 ou superior
+- Docker e Docker Compose
+- MongoDB 7+
+
+### Configuração das Variáveis de Ambiente
+
+1. Copie o arquivo `.env.example` para `.env`:
+
+```bash
+cp .env.example .env
+```
+
+2. Configure as variáveis de ambiente no arquivo `.env`:
+
+```
+PORT=3000
+NODE_ENV=development
+MONGO_URI=mongodb://localhost:27017/ozmap-tech-test?replicaSet=rs0&authSource=admin
+MAPS_API_KEY=sua_chave_da_api_do_google_maps
+JWT_SECRET_KEY=sua_chave_secreta_para_tokens_jwt
+```
+
+### Configuração do Banco de Dados
+
+Execute o Docker Compose para iniciar o MongoDB:
+
+```bash
+docker-compose up -d
+```
+
+Esta configuração inicia um servidor MongoDB com suporte a operações geoespaciais e configurado com um ReplicaSet (necessário para suportar transações no MongoDB).
+
+## 🚀 Executando a Aplicação
+
+Instale as dependências:
+
+```bash
+yarn install
+```
+
+Execute a aplicação em modo de desenvolvimento:
+
+```bash
+yarn dev
+```
+
+A API estará disponível em `http://localhost:3000`.
+
+## 🧪 Executando os Testes
+
+### Executando todos os testes
+
+```bash
+yarn test
+```
+
+### Executando testes com cobertura
+
+```bash
+yarn test:coverage
+```
+
+Isso gerará relatórios de cobertura na pasta `.nyc_output` e um relatório HTML na pasta `coverage`.
+
+### Testes Unitários
+
+Os testes unitários se concentram em testar componentes individuais como serviços e bibliotecas:
+
+```bash
+yarn test src/tests/unit
+```
+
+### Testes de Integração
+
+Os testes de integração testam o comportamento dos endpoints da API:
+
+```bash
+yarn test src/tests/integration
+```
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── config/         # Configurações (logger, swagger)
+├── controllers/    # Controladores da API
+├── errors/         # Definições de erros da aplicação
+├── libs/           # Bibliotecas auxiliares (geocodificação)
+├── middlewares/    # Middlewares do Express
+├── models/         # Modelos de dados (Typegoose)
+├── repositories/   # Camada de acesso ao banco de dados
+├── routes/         # Definição de rotas
+├── schemas/        # Esquemas de validação (Zod)
+├── services/       # Lógica de negócios
+├── tests/          # Testes unitários e de integração
+├── types/          # Definições de tipos TypeScript
+├── database.ts     # Configuração do banco de dados
+└── index.ts        # Ponto de entrada da aplicação
+```
+
+## 📝 Funcionalidades Implementadas
 
 ### Usuários
-- **CRUD** completo para usuários.
-- Cada usuário deve ter nome, email, endereço e coordenadas.
-- Na criação, o usuário pode fornecer endereço ou coordenadas. Haverá erro caso forneça ambos ou nenhum.
-- Uso de serviço de geolocalização para resolver endereço ↔ coordenadas.
-- Atualização de endereço ou coordenadas deve seguir a mesma lógica.
+
+- **CRUD completo**: Criar, ler, atualizar e deletar usuários
+- **Geocodificação**: Conversão automática entre endereço e coordenadas
+- Validação para garantir que apenas um dos dois (endereço ou coordenadas) seja fornecido na criação/atualização
 
 ### Regiões
-- **CRUD** completo para regiões.
-- Uma região é definida como um polígono em GeoJSON, um formato padrão para representar formas geográficas. Cada região tem um nome, um conjunto de coordenadas que formam o polígono, e um usuário que será o dono da região.
-- Listar regiões contendo um ponto específico.
-- Listar regiões a uma certa distância de um ponto, com opção de filtrar regiões não pertencentes ao usuário que fez a requisição.
-- Exemplo de um polígono simples em GeoJSON:
-  ```json
-  {
-    "type": "Polygon",
-    "coordinates": [
-      [
-        [longitude1, latitude1],
-        [longitude2, latitude2],
-        [longitude3, latitude3],
-        [longitude1, latitude1] // Fecha o polígono
-      ]
-    ]
-  }
-  ```
 
-### Testes
-- Unitários e de integração.
+- **CRUD completo**: Criar, ler, atualizar e deletar regiões
+- **Busca espacial**: Encontrar regiões que contêm um ponto específico
+- **Busca por distância**: Encontrar regiões a uma distância específica de um ponto
+- Integração com o usuário: Cada região pertence a um usuário
 
-## 🌟 **Diferenciais**
+### Autenticação
 
-- Autenticação não é requisito, podendo então o usuário ser fornecido junto do corpo da requisição. Caso implemente autenticação, o usuário deve ser obtido a partir do token.
-- Interface básica de usuário.
-- Documentação completa da API.
-- Internacionalização.
-- Cobertura de código.
-- Utilização de mongo session
+- Sistema de login baseado em JWT
+- Proteção de rotas privadas
+- Regras de autorização para modificação de recursos
 
-## ⚖ **Critérios de Avaliação**
+## 📚 Documentação da API
 
-1. Organização e clareza do código.
-2. Estruturação do projeto.
-3. Qualidade e eficiência do código.
-4. Cobertura e qualidade de testes.
-5. Pontos diferenciais citados acima.
-6. Tempo de entrega (será considerado apenas o cumprimento do prazo, sem distinção entre entregas feitas no primeiro ou no último dia, com ênfase na qualidade da entrega).
-7. Padronização e clareza das mensagens de erro.
-8. Organização dos commits.
-9. Implementação de logs.
-10. Adesão às boas práticas de API RESTful.
+A API é documentada usando Swagger e está disponível em:
 
-## 🚀 **Entrega**
+```
+http://localhost:3000/api-docs
+```
 
-1. Crie um repositório público com a base desse código.
-2. Crie uma branch para realizar o seu trabalho.
-3. Ao finalizar, faça um pull request para a branch `main` do seu repositório.
-4. Envie um email para `rh@ozmap.com.br` informando que o teste foi concluído.
-5. Aguarde nosso feedback.
+### Endpoints Principais
 
----
+- **Autenticação**: `/api/auth/login`
+- **Usuários**: `/api/users`
+- **Regiões**: `/api/regions`
 
-Estamos ansiosos para ver sua implementação e criatividade em ação! Boa sorte e que a força do código esteja com você! 🚀
+## ✨ Diferenciais Implementados
+
+- **Autenticação JWT**: Sistema completo de autenticação com tokens
+- **Documentação Swagger**: Documentação interativa da API
+- **Logs Estruturados**: Sistema de logs com níveis de severidade e formato JSON
+- **Transações**: Uso de MongoDB sessions para operações atômicas
+- **Validação Robusta**: Esquemas de validação com Zod
+- **Cobertura de Testes**: Testes unitários e de integração com alta cobertura
+
+Este projeto foi desenvolvido como parte de um desafio técnico da OZmap para construir uma API de geolocalização.
