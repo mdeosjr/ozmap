@@ -1,0 +1,373 @@
+{
+  "info": {
+    "name": "Technical Assessment API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"Password123!\",\n  \"address\": \"Av Paulista, São Paulo\"\n}"
+            },
+            "description": "Cria um novo usuário. Você pode fornecer endereço OU coordenadas, mas não ambos."
+          }
+        },
+        {
+          "name": "Create User with Coordinates",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane@example.com\",\n  \"password\": \"Password123!\",\n  \"coordinates\": [-46.6388, -23.5504]\n}"
+            },
+            "description": "Cria um novo usuário com coordenadas ao invés de endereço."
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "me"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "description": "Obtém os dados do usuário autenticado."
+          }
+        },
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "description": "Lista todos os usuários com paginação."
+          }
+        },
+        {
+          "name": "Update Current User",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "me"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"address\": \"Rua Augusta, São Paulo\"\n}"
+            },
+            "description": "Atualiza os dados do usuário autenticado."
+          }
+        },
+        {
+          "name": "Delete Current User",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "me"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "description": "Exclui o usuário autenticado."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Regions",
+      "item": [
+        {
+          "name": "Create Region",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/regions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"São Paulo Region\",\n  \"geometry\": {\n    \"type\": \"Polygon\",\n    \"coordinates\": [[\n      [-46.650, -23.550],\n      [-46.640, -23.550],\n      [-46.640, -23.540],\n      [-46.650, -23.540],\n      [-46.650, -23.550]\n    ]]\n  }\n}"
+            },
+            "description": "Cria uma nova região (polígono)."
+          }
+        },
+        {
+          "name": "List Regions",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/regions?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Lista todas as regiões com paginação."
+          }
+        },
+        {
+          "name": "Get Region by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/regions/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "ID_DA_REGIAO"
+                }
+              ]
+            },
+            "description": "Obtém uma região específica pelo ID."
+          }
+        },
+        {
+          "name": "Find Regions by Point",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/regions/by-point?point=-46.6388,-23.5504",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions", "by-point"],
+              "query": [
+                {
+                  "key": "point",
+                  "value": "-46.6388,-23.5504"
+                }
+              ]
+            },
+            "description": "Encontra regiões que contêm um ponto específico."
+          }
+        },
+        {
+          "name": "Find Regions by Distance",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/regions/by-distance?point=-46.6388,-23.5504&maxDistance=1000",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions", "by-distance"],
+              "query": [
+                {
+                  "key": "point",
+                  "value": "-46.6388,-23.5504"
+                },
+                {
+                  "key": "maxDistance",
+                  "value": "1000"
+                },
+                {
+                  "key": "filterRegions",
+                  "value": "true"
+                }
+              ],
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}"
+                }
+              ]
+            },
+            "description": "Encontra regiões a uma distância específica de um ponto. O parâmetro filterRegions=true exclui regiões do usuário autenticado dos resultados."
+          }
+        },
+        {
+          "name": "Update Region",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/api/regions/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "ID_DA_REGIAO"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nome Atualizado da Região\"\n}"
+            },
+            "description": "Atualiza uma região específica. Apenas o proprietário da região pode atualizá-la."
+          }
+        },
+        {
+          "name": "Delete Region",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/regions/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "ID_DA_REGIAO"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "description": "Exclui uma região específica. Apenas o proprietário da região pode excluí-la."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "seu-token-jwt-aqui",
+      "type": "string"
+    }
+  ]
+}
