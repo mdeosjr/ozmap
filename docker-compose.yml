@@ -1,36 +1,17 @@
 services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "${PORT}:${PORT}"
-    environment:
-      - NODE_ENV=${NODE_ENV}
-      - PORT=${PORT}
-      - MONGO_URI=mongodb://mongodb:27017/ozmap-tech-test?authSource=admin&?replicaSet=rs0
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - MAPS_API_KEY=${MAPS_API_KEY}
-    depends_on:
-      - mongodb
-    networks:
-      - oz-network
-    command: yarn dev
-
   mongodb:
     image: mongo:7
-    command: ["mongod", "--replSet", "rs0"]
+    container_name: mongodb
+    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
-    environment:
-      - MONGO_INITDB_DATABASE=ozmap-tech-test
     healthcheck:
       test: |
-        mongosh --eval "try { rs.status().ok } catch (e) { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'localhost:27017' }] }).ok }"
+        echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongodb:27017'}]}) }" | mongosh --port 27017 --quiet
       start_period: 0s
-      interval: 500ms
+      interval: 5s
       timeout: 5s
       retries: 5
     networks:
