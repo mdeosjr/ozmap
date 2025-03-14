@@ -137,7 +137,7 @@
         {
           "name": "Update Current User",
           "request": {
-            "method": "PUT",
+            "method": "PATCH",
             "url": {
               "raw": "{{baseUrl}}/api/users/me",
               "host": ["{{baseUrl}}"],
