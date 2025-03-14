@@ -67,20 +67,10 @@ export class RegionService {
   }
 
   static async findByPoint(point: string): Promise<Region[]> {
-    if (!point) {
-      logger.warn(
-        "Attempt to find regions by point without providing coordinates",
-      );
-      throw new AppError(
-        "Coordinates must be provided",
-        STATUS_CODE.BAD_REQUEST,
-      );
-    }
-
     const geoJsonPoint = this.makeGeoJsonPoint(point);
 
     const regions = await RegionRepository.findByPoint(geoJsonPoint);
-    if (regions.length === 0) {
+    if (!regions || regions.length === 0) {
       logger.info({ point }, "No regions found containing point");
       throw new AppError("Regions not found", STATUS_CODE.NOT_FOUND);
     }
@@ -93,16 +83,6 @@ export class RegionService {
     maxDistance: number,
     userId?: string,
   ): Promise<Region[]> {
-    if (!point || !maxDistance) {
-      logger.warn(
-        "Attempt to find regions by distance without providing coordinates or distance",
-      );
-      throw new AppError(
-        "Coordinates and distance must be provided",
-        STATUS_CODE.NOT_FOUND,
-      );
-    }
-
     const geoJsonPoint = this.makeGeoJsonPoint(point);
 
     const regions = await RegionRepository.findByDistance(

@@ -53,6 +53,12 @@ export class RegionController {
     try {
       const { point } = req.query;
 
+      if (!point) {
+        res
+          .status(STATUS_CODE.BAD_REQUEST)
+          .json({ error: "Coordinates must be provided" });
+      }
+
       const regions = await RegionService.findByPoint(String(point));
 
       res.status(STATUS_CODE.OK).json(regions);
@@ -68,6 +74,12 @@ export class RegionController {
   ): Promise<void> {
     try {
       const { point, maxDistance, filterRegions } = req.query;
+      if (!point || !maxDistance) {
+        res
+          .status(STATUS_CODE.BAD_REQUEST)
+          .json({ error: "Point and max distance must be provided" });
+      }
+
       const { user } = res.locals;
 
       const userId = filterRegions === "true" ? user.id : undefined;

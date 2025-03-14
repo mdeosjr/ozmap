@@ -84,7 +84,10 @@ export class RegionRepository {
     id: string,
     updateData: UpdateRegionInput,
   ): Promise<Region | null> {
-    return await RegionModel.findByIdAndUpdate(id, updateData);
+    await RegionModel.findByIdAndUpdate(id, updateData);
+
+    const region = await RegionModel.findById(id);
+    return region;
   }
 
   static async delete(

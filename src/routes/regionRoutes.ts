@@ -8,7 +8,7 @@ const router = Router();
 
 router.get("/", RegionController.findAll);
 router.get("/by-point", RegionController.findByPoint);
-router.get("/:id", RegionController.findById);
+router.get("/:id([0-9a-fA-F]{24})", RegionController.findById);
 
 router.use(AuthMiddleware.validate);
 
@@ -19,10 +19,10 @@ router.post(
   RegionController.create,
 );
 router.patch(
-  "/:id",
+  "/:id([0-9a-fA-F]{24})",
   SchemaValidation.validate(updateRegionSchema),
   RegionController.update,
 );
-router.delete("/:id", RegionController.delete);
+router.delete("/:id([0-9a-fA-F]{24})", RegionController.delete);
 
 export default router;
